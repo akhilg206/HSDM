@@ -1,4 +1,4 @@
-# Multi-Component HSDM
+# Multi-Component HSDM v2.0
 
 MATLAB Codes to: -
 
@@ -18,15 +18,22 @@ Akhil Gopinath, Kannan A.
 
 ## To run
 
-01. Run 'Main.m'
-
-02. Enter/ Select required options
+01. Open HSDM.prj
+02. Run 'Main.m'
+03. Enter/ Select required options
 
 PS: find the list of estimated parameters for BG_3C in file EP.xlsx in Results folder
 
 
-## Revision History
+## Change Log
 
-27 Mar - First version. Akhil Gopinath
+13 Apr 2020, v2.0, bugfix, Akhil Gopinath
 
-Initial Commit
+* Modified table structure for saving results
+* updated code to save results tabulated by date
+ 
+27 Mar 2020, v1.0, Initial Commit, Akhil Gopinath
+
+* First version. 
+
+
