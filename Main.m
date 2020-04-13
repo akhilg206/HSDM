@@ -66,7 +66,7 @@ for C = str2num(Inputs{1})
                     %%Call EHO to estimate parameters
                     
                     funcCall = @(x) HSDM(N, x, t, Dose, rp, qo, isoFunc, eqp, c, nr, co,'scale',scale,'Display','off');
-                    [x,fval] = ElephantHerd(funcCall, N, LB, UB,'Display','iter','Hybrid','on','functionTolerance',1e+5,'Display','iter');
+                    [x,fval] = ElephantHerd(funcCall, N, LB, UB,'Display','iter','Hybrid','on','functionTolerance',1e-3,'Display','iter');
                     clear HSDM
                     
                     [Er,t,c,cp,Yo,qbp] =  funcCall(x);
