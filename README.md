@@ -1,4 +1,4 @@
-# Multi-Component HSDM v2.0
+# Multi-Component HSDM v3.0
 
 MATLAB Codes to: -
 
@@ -26,6 +26,11 @@ PS: find the list of estimated parameters for BG_3C in file EP.xlsx in Results f
 
 
 ## Change Log
+
+13 Apr 2020, v3.0, bugfix, Akhil Gopinath
+
+* resolved scaling issues while simulating
+* resolved file saving issue
 
 13 Apr 2020, v2.0, bugfix, Akhil Gopinath
 
