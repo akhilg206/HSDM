@@ -1,4 +1,4 @@
-clear;clc;close all
+clear all;clc;close all
 format shortG
 
 fn = {'Parameter Estimation','Simulation'};
