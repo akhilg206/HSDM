@@ -70,7 +70,7 @@ for C = str2num(Inputs{1})
                     clear HSDM
                     
                     [Er,t,c,cp,Yo,qbp] =  funcCall(x);
-                    Est_params_final(end+1,:) = {Run, x(1,:)*scale, Er};
+                    Est_params_final(end+1,:) = array2table([Run, x(1,:)*scale, Er]);
                     
                     %%Plot Results
                     mark=["d","s","o"];
