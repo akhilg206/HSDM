@@ -28,7 +28,7 @@ co = 100*ones(1,N);
 Inputs = inputdlg({'Carbon (0 or 1): ',...
     'Temperature',...
     ' pH','Save results'},'Give Inputs',[1,100],{'0','27','3','1'});
-
+save = str2num(Inputs{4});
 for C = str2num(Inputs{1})
     for T = str2num(Inputs{2})
         for pH = str2num(Inputs{3})
@@ -85,7 +85,11 @@ for C = str2num(Inputs{1})
                     end
                     
                     
-                    
+                    if save
+                        
+                        writetable(Est_params_final,fullfile(cd,"Results","Est_Results.xlsx"),'Sheet',string(datetime('now','Format','d MMM uuuu')),'WriteMode','append')
+                        
+                    end
                     
                     
                     
@@ -101,11 +105,11 @@ for C = str2num(Inputs{1})
                     Inputs = inputdlg({'Simulation time (>0), min: ',...
                         ' Size of Time Steps',...
                         ' Ds to Simulate with (in m^2/s give as space separated values for multicomponent i.e. Ds1 Ds2 Ds3 )',...
-                        ' Multiplier Value'},'Give Inputs',[1,100],{'1000','100','','1e15'});
+                        ' Multiplier Value'},'Give Inputs',[1,100],{'1000','100','','1e14'});
                     if ~isempty(Inputs{2}) && ~isempty(Inputs{1}) && ~isempty(Inputs{3})
                         t = 0:str2num(Inputs{2}):str2num(Inputs{1})';
                         x = str2num(Inputs{3});
-                        scale = str2num(Inputs{4});
+                        scale = str2num(Inputs{4})
                     else
                         
                         error('Invalid Inputs');
@@ -115,7 +119,7 @@ for C = str2num(Inputs{1})
                     
                     %%Calculate reference variables for non dimensionalizing
                     qo = isoFunc(eqp,co);
-                    Ds = x*scale;
+                    Ds = x;
                     c = zeros(length(t),N);
                     [Er,t,c,cp,Yo,qbp] =  HSDM(N, Ds, t, Dose, rp, qo, isoFunc, eqp, c, nr, co,'scale',1/scale,'Display','iter');
                     
@@ -130,17 +134,19 @@ for C = str2num(Inputs{1})
                         plot(t,cp(:,i),line(i)+cole(i))
                     end
                     
+                    
+                    if save
+                        
+                        writetable(Est_params_final,fullfile(cd,"Results","Sim_Results.xlsx"),'Sheet',string(datetime('now','Format','d MMM uuuu')),'WriteMode','append')
+                        
+                    end
+                    
             end
         end
     end
 end
 
 
-if str2num(Inputs{4})
-    
-    writetable(Est_params_final,fullfile(cd,"Results","Results.xlsx"),'Sheet',string(datetime('now','Format','d MMM uuuu')),'WriteMode','append')
-
-end
 
 
 
