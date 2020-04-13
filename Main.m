@@ -1,4 +1,4 @@
-clear all;clc;close all
+clear;clc;close all
 format shortG
 
 fn = {'Parameter Estimation','Simulation'};
@@ -12,22 +12,22 @@ N = 3;
 Rd = readtable('BG_3C.xlsx','Sheet',"Run Details");
 
 
-Est_params_final=table([],repmat([],1,N),[]);
-Est_params_final.Properties.VariableNames = ["Run",strjoin("Ds"+string(1:N),' & '),"SSE"];
+Est_params_final = array2table(zeros(1,N+2));
+Est_params_final.Properties.VariableNames = ["Run","Ds"+string(1:N),"SSE"];
 
 rp = 6e-4;
 isoFunc = @ExtendedSipps;
 load EquiParams_BG.mat
 
 nr=100;
-            
+
 co = 100*ones(1,N);
 
 %% For Parameter estimation use this section
 
 Inputs = inputdlg({'Carbon (0 or 1): ',...
     'Temperature',...
-    ' pH'},'Give Inputs',[1,100],{'0','27','3'});
+    ' pH','Save results'},'Give Inputs',[1,100],{'0','27','3','1'});
 
 for C = str2num(Inputs{1})
     for T = str2num(Inputs{2})
@@ -41,38 +41,38 @@ for C = str2num(Inputs{1})
             eqp = equiParams.Parameters{equiParams.Carbon == C &...
                 equiParams.Temperature == T &...
                 equiParams.pH == pH};
-
+            
             
             
             switch Task
                 
                 case 'Parameter Estimation'
-                
+                    
                     
                     %%Read The data for the corresponding run
                     Data = readtable('BG_3C.xlsx', 'Sheet', string(Run));
                     t = Data{:,1};
                     c = Data{:,2:end};
                     
-
+                    
                     %%Calculate reference variables for non dimensionalizing
                     co = c(1,:);
                     qo = isoFunc(eqp,co);
                     
-                    
+                    %%Create variables for search domain
                     [LB,UB,scale]=deal(ones(1*N,1),1e3*ones(1*N,1),1e-14);
                     
                     
                     %%Call EHO to estimate parameters
                     
                     funcCall = @(x) HSDM(N, x, t, Dose, rp, qo, isoFunc, eqp, c, nr, co,'scale',scale,'Display','off');
-                    [x,fval] = ElephantHerd(funcCall, N, LB, UB,'Display','iter','Hybrid','on','functionTolerance',1e-3,'Display','iter');
+                    [x,fval] = ElephantHerd(funcCall, N, LB, UB,'Display','iter','Hybrid','on','functionTolerance',1e+5,'Display','iter');
                     clear HSDM
                     
                     [Er,t,c,cp,Yo,qbp] =  funcCall(x);
-                    Est_params_final(end+1,:) = {Run, x*scale, Er};
+                    Est_params_final(end+1,:) = {Run, x(1,:)*scale, Er};
                     
-                    %% PLot Results
+                    %%Plot Results
                     mark=["d","s","o"];
                     line=["-",":","-."];
                     cole=["r","b","g"];
@@ -83,9 +83,6 @@ for C = str2num(Inputs{1})
                         plot(t, c(:,i),mark(i)+cole(i),...
                             t,cp(:,i),line(i)+cole(i))
                     end
-
-                    
-                    
                     
                     
                     
@@ -99,7 +96,7 @@ for C = str2num(Inputs{1})
                     %% USe this section for SImulation
                     
                 case 'Simulation'
-                                        
+                    
                     %%Set the stop time
                     Inputs = inputdlg({'Simulation time (>0), min: ',...
                         ' Size of Time Steps',...
@@ -114,13 +111,13 @@ for C = str2num(Inputs{1})
                         error('Invalid Inputs');
                         
                     end
-
+                    
                     
                     %%Calculate reference variables for non dimensionalizing
                     qo = isoFunc(eqp,co);
                     Ds = x*scale;
                     c = zeros(length(t),N);
-                   [Er,t,c,cp,Yo,qbp] =  HSDM(N, Ds, t, Dose, rp, qo, isoFunc, eqp, c, nr, co,'scale',1/scale,'Display','iter');
+                    [Er,t,c,cp,Yo,qbp] =  HSDM(N, Ds, t, Dose, rp, qo, isoFunc, eqp, c, nr, co,'scale',1/scale,'Display','iter');
                     
                     %% PLot Results
                     mark=["d","s","o"];
@@ -136,6 +133,13 @@ for C = str2num(Inputs{1})
             end
         end
     end
+end
+
+
+if str2num(Inputs{4})
+    
+    writetable(Est_params_final,fullfile(cd,"Results","Results.xlsx"),'Sheet',string(datetime('now','Format','d MMM uuuu')),'WriteMode','append')
+
 end
 
 

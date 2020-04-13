@@ -51,8 +51,6 @@ try
     qavg = reshape((3*trapz(r,((r'.^2).*Yo))),length(t),N).*qo;
     
     cp = (X.*co);
-    size(c)
-    size(t)
     Err=sum(sum((c-cp).^2));%+sum(sum((Xl-cp).^2));
     
 catch ME
