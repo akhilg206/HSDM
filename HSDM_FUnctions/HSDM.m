@@ -21,7 +21,7 @@ end
 
 persistent Display
 
-Ds = x( 1:N)*otherArgs.scale
+Ds = x( 1:N)*otherArgs.scale;
 
 DB = Dose*qo./co;
 g = Ds./Ds(1);
