@@ -16,6 +16,7 @@ arguments
     co (1,:)  double {mustBeNonnegative, mustBeFinite} = c(1,:)
     otherArgs.scale (1,1)  double {mustBePositive, mustBeFinite} = 1e-15
     otherArgs.Display (1,1) string {mustBeMember(otherArgs.Display,{'off', 'iter', 'final'})} = 'off'
+
     
 end
 
@@ -40,12 +41,15 @@ try
     
     if N~=1
         
-        Yo=permute(reshape(Yo,size(To,1),nr,N),[2,1,3]);
+        Yo = permute(reshape(Yo,size(To,1),nr,N),[2,1,3]);
+        qTot = cell2table(squeeze(num2cell(Yo.*reshape(qo,[1,1,N]),[1 2]))');
+        qTot.Properties.VariableNames = ("C"+char([65;66;67]))';
         
     else
         
         Yo=Yo';
-        
+        qTot = cell2table(num2cell(Yo.*qo));
+        qTot.Properties.VariableNames = "CA";
     end
     
     qavg = reshape((3*trapz(r,((r'.^2).*Yo))),length(t),N).*qo;
@@ -74,7 +78,7 @@ if ~strcmp(otherArgs.Display, 'off')
     disp(Display)
     
 end
-[varargout{1},varargout{2},varargout{3},varargout{4},varargout{5}]=deal(t,c,cp,Yo,qavg);
+[varargout{1},varargout{2},varargout{3},varargout{4},varargout{5},varargout{6}]=deal(t,c,cp,Yo,qavg, qTot);
 
     function Yt=model(~,Y)
         

@@ -109,7 +109,7 @@ for C = str2num(Inputs{1})
                     if ~isempty(Inputs{2}) && ~isempty(Inputs{1}) && ~isempty(Inputs{3})
                         t = 0:str2num(Inputs{2}):str2num(Inputs{1})';
                         x = str2num(Inputs{3});
-                        scale = str2num(Inputs{4})
+                        scale = str2num(Inputs{4});
                     else
                         
                         error('Invalid Inputs');
@@ -121,7 +121,10 @@ for C = str2num(Inputs{1})
                     qo = isoFunc(eqp,co);
                     Ds = x;
                     c = zeros(length(t),N);
-                    [Er,t,c,cp,Yo,qbp] =  HSDM(N, Ds, t, Dose, rp, qo, isoFunc, eqp, c, nr, co,'scale',1/scale,'Display','iter');
+                    [Er,t,c,cp,Yo,qbp,q] =  HSDM(N, Ds, t, Dose,     rp, qo, isoFunc, eqp, c, nr, co,'scale',1/scale,'Display','iter');
+                    
+                    % q is a table which can be accessed as q.CA for CA
+                    % q.CA{:,:} will give nr rows matrix with  length of t columns 
                     
                     %% PLot Results
                     mark=["d","s","o"];
@@ -138,7 +141,7 @@ for C = str2num(Inputs{1})
                     if save
                         
                         writetable(Est_params_final,fullfile(cd,"Results","Sim_Results.xlsx"),'Sheet',string(datetime('now','Format','d MMM uuuu')),'WriteMode','append')
-                        
+                        writetable(q,fullfile(cd,"Results","q_Results.xlsx"),'Sheet',string(datetime('now','Format','d MMM uuuu'))+"C"+C+"T"+T+"pH"+pH,'WriteMode','append')
                     end
                     
             end
